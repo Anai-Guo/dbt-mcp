@@ -665,6 +665,24 @@ async def test_get_job_run_artifact_server_error_raises_artifact_retrieval(clien
             await client.get_job_run_artifact(12345, 100, "manifest.json")
 
 
+@pytest.mark.parametrize(
+    "artifact_path",
+    [
+        "../manifest.json",
+        "/manifest.json",
+        "manifest.json:step2",
+        "manifest.json?limit=1",
+        "manifest.json#section",
+        "%2e%2e/manifest.json",
+    ],
+)
+async def test_get_job_run_artifact_rejects_unexpected_path_shapes(
+    client, artifact_path
+):
+    with pytest.raises(InvalidParameterError, match="artifact_path"):
+        await client.get_job_run_artifact(12345, 100, artifact_path)
+
+
 async def test_list_projects(client):
     mock_response = MagicMock()
     mock_response.json.return_value = {
