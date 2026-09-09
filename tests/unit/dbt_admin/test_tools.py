@@ -1,5 +1,6 @@
 import json
 from dataclasses import replace
+from typing import cast
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -663,4 +664,5 @@ async def test_list_jobs_project_scope_and_pagination(
         expected["project_id"] = project_id
     elif prod_environment_id is not None:
         expected["environment_id"] = prod_environment_id
-    admin_context.admin_client.list_jobs.assert_awaited_once_with(12345, **expected)
+    list_jobs_mock = cast(AsyncMock, admin_context.admin_client.list_jobs)
+    list_jobs_mock.assert_awaited_once_with(12345, **expected)
